@@ -1,11 +1,37 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
-import styles from '../styles/Home.module.css'
+import Head from "next/head";
+import "../next.config";
+import { Inter, Quicksand } from "@next/font/google";
+// import styles from "../styles/Home.module.css";
+import {
+  Box,
+  Button,
+  Input,
+  InputGroup,
+  InputRightAddon,
+  Text,
+} from "@chakra-ui/react";
+import { BiSearchAlt } from "react-icons/bi";
+import axios from "axios";
+import urls from "./component/urls";
+import Weathercard from "./component/weather.card";
+import { useState } from "react";
+import { useRouter } from "next/router";
+const inter = Inter({ subsets: ["latin"] });
+const quicksand = Quicksand({ subsets: ["latin"], style: ["normal"] });
 
-const inter = Inter({ subsets: ['latin'] })
+export default function Home(data) {
+  const [input, setInput] = useState("");
+  const router = useRouter();
+  const handleChange = (e) => {
+    setInput(e.target.value);
+  };
 
-export default function Home() {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (input.length) {
+      router.push(`/searchresult/${input}`);
+    }
+  };
   return (
     <>
       <Head>
@@ -14,110 +40,140 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
-        <div className={styles.description}>
-          <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>pages/index.js</code>
-          </p>
-          <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By{' '}
-              <Image
-                src="/vercel.svg"
-                alt="Vercel Logo"
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
-              />
-            </a>
-          </div>
-        </div>
+      <Box
+        height={"835px"}
+        display={"flex"}
+        flexDir={"column"}
+        alignItems={"center"}
+        justifyContent={"center"}
+        // bgImage={"/weather.jpg"}
+        bgPos={"center"}
+        bgRepeat={"no-repeat"}
+        bgSize={"cover"}
+        bgColor={"gray.100"}
+      >
+        <Box className={quicksand.className} fontWeight={"bold"}>
+          <form onSubmit={handleSubmit}>
+            <InputGroup>
+              <Input
+                type={"search"}
+                isRequired
+                width={"lg"}
+                // border={"2px"}
+                borderRadius={"full"}
+                fontWeight={"normal"}
+                onChange={handleChange}
+                placeholder={"Search City For Current Weather and Predictions"}
+                bgColor={"white"}
+              ></Input>
+              <InputRightAddon
+                as={Button}
+                onClick={handleSubmit}
+                bgColor={"blue.700"}
+                borderRadius={"full"}
+                children={<BiSearchAlt color="white" />}
+              ></InputRightAddon>
+            </InputGroup>
+          </form>
 
-        <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
-          />
-          <div className={styles.thirteen}>
-            <Image
-              src="/thirteen.svg"
-              alt="13"
-              width={40}
-              height={31}
-              priority
+          <Text
+            textAlign={"center"}
+            fontSize={"xl"}
+            textColor={"black"}
+            fontWeight={"light"}
+            fontFamily={"Poppins"}
+          ></Text>
+        </Box>
+        <br></br>
+        <Box>
+          <Text
+            fontFamily={"Poppins"}
+            fontSize={"4xl"}
+            fontWeight={"bold"}
+            textAlign={"center"}
+          >
+            World Weather
+          </Text>
+          <br></br>
+          <Box
+            display={"flex"}
+            gap={"10"}
+            flexWrap={"wrap"}
+            justifyContent={"center"}
+          >
+            {/* weather box1 */}
+            <Weathercard
+              country={data.data1.location.country}
+              cityName={data.data1.location.name}
+              imageSource={`http://${data.data1.current.condition.icon}`}
+              time={data.data1.location.localtime.substring(11)}
+              degreesC={data.data1.current.temp_c}
+              degreesF={data.data1.current.temp_f}
+              wind={data.data1.current.wind_mph}
+              humidity={data.data1.current.humidity}
             />
-          </div>
-        </div>
-
-        <div className={styles.grid}>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
+            <Weathercard
+              country={data.data2.location.country}
+              cityName={data.data2.location.name}
+              imageSource={`http://${data.data2.current.condition.icon}`}
+              time={data.data2.location.localtime.substring(11)}
+              degreesC={data.data2.current.temp_c}
+              degreesF={data.data2.current.temp_f}
+              wind={data.data2.current.wind_mph}
+              humidity={data.data2.current.humidity}
+            />
+            <Weathercard
+              country={data.data3.location.country}
+              cityName={data.data3.location.name}
+              imageSource={`http://${data.data3.current.condition.icon}`}
+              time={data.data3.location.localtime.substring(11)}
+              degreesC={data.data3.current.temp_c}
+              degreesF={data.data3.current.temp_f}
+              wind={data.data3.current.wind_mph}
+              humidity={data.data3.current.humidity}
+            />
+            <Weathercard
+              country={data.data4.location.country}
+              cityName={data.data4.location.name}
+              imageSource={`http://${data.data4.current.condition.icon}`}
+              time={data.data4.location.localtime.substring(11)}
+              degreesC={data.data4.current.temp_c}
+              degreesF={data.data4.current.temp_f}
+              wind={data.data4.current.wind_mph}
+              humidity={data.data4.current.humidity}
+            />
+          </Box>
+        </Box>
+      </Box>
     </>
-  )
+  );
 }
+
+export async function getStaticProps(context) {
+  let response1 = await axios.get(
+    // `${urls.base_url}/${urls.current_weather}?key=a3996048254b4c36af2154129230801&q=Paris`
+    `${urls.base_url}/${urls.current_weather}?key=a3996048254b4c36af2154129230801&q=Kathmandu`
+  );
+
+  let response2 = await axios.get(
+    // `${urls.base_url}/${urls.current_weather}?key=a3996048254b4c36af2154129230801&q=Paris`
+    `${urls.base_url}/${urls.current_weather}?key=a3996048254b4c36af2154129230801&q=London`
+  );
+
+  let response3 = await axios.get(
+    `${urls.base_url}/${urls.current_weather}?key=a3996048254b4c36af2154129230801&q=New York`
+  );
+
+  let response4 = await axios.get(
+    `${urls.base_url}/${urls.current_weather}?key=a3996048254b4c36af2154129230801&q=New Delhi`
+  );
+  console.log("api called");
+  let data1 = response1.data;
+  let data2 = response2.data;
+  let data3 = response3.data;
+  let data4 = response4.data;
+  return {
+    props: { data1, data2, data3, data4 },
+  };
+}
+
