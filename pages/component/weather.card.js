@@ -1,5 +1,6 @@
 import { Box, Text } from "@chakra-ui/react";
-import Image from "next/image";
+import dynamic from "next/dynamic";
+const Image = dynamic(() => import("next/image"));
 import React from "react";
 import { BiWind } from "react-icons/bi";
 import { GiDroplets, GiThermometerScale } from "react-icons/gi";
@@ -34,7 +35,13 @@ const Weathercard = (datas) => {
         </Text>
       </Box>
       <Box>
-        <Image src={datas.imageSource} height={"60"} width={"60"}></Image>
+        <Image
+          placeholder={"blur"}
+          blurDataURL={"/vercel.svg"}
+          src={datas.imageSource}
+          height={"60"}
+          width={"60"}
+        ></Image>
       </Box>
       <Box>
         <Box>
@@ -67,12 +74,6 @@ const Weathercard = (datas) => {
           </Box>
         </Box>
       </Box>
-      {/* <Image
-            src={`https://cdn.weatherapi.com/weather/64x64/day/113.png`}
-            height={"70"}
-            width={"70"}
-            alt={"Weather condition right now"}
-          ></Image> */}
     </Box>
   );
 };

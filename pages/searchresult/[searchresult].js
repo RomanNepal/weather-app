@@ -1,45 +1,37 @@
 import {
   Box,
   Button,
-  Center,
   Input,
   InputGroup,
   InputRightAddon,
+  Skeleton,
   Text,
 } from "@chakra-ui/react";
-
+import dynamic from "next/dynamic";
 import axios from "axios";
-import Image from "next/image";
+import Head from "next/head";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { BiSearchAlt, BiWind } from "react-icons/bi";
-import { GiDroplets, GiThermometerScale } from "react-icons/gi";
-import { IoMdTime } from "react-icons/io";
+import React, { Suspense, useEffect, useState } from "react";
+import { BiSearchAlt } from "react-icons/bi";
 import TodayForcast from "../component/today.forcast";
 import TomorrowForcast from "../component/tomorrow.forcast";
 import urls from "../component/urls";
+import Loading from "../component/loading";
 import Weathercard from "../component/weather.card";
 
-const SearchResult = () => {
+const suspense = () => {
+  return <div>Loading...</div>;
+};
+const SearchResult = (recieved) => {
   const router = useRouter();
   const [data, setData] = useState();
   const [formData, setFormData] = useState("");
+  const [loading, setLoading] = useState(true);
+
   console.log(router.query);
   useEffect(() => {
-    const get = async () => {
-      try {
-        if (router.query) {
-          let result = await axios.get(
-            `${urls.base_url}/${urls.forecast}?key=${urls.key}&q=${router.query.searchresult}&days=7&aqi=yes&alerts=yes`
-          );
-          console.log(result.data);
-          setData(result.data);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    get();
+    setData(recieved.data);
+    setLoading(false);
   }, [router.query.searchresult]);
   const handleChange = (e) => {
     setFormData(e.target.value);
@@ -51,6 +43,15 @@ const SearchResult = () => {
 
   return (
     <>
+      <Head>
+        <title>Weather Deets</title>
+        <meta
+          name="description"
+          content="World Weather - Current and Forcast"
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <Box
         padding={"10"}
         display={"flex"}
@@ -79,11 +80,13 @@ const SearchResult = () => {
               onClick={handleSubmit}
               bgColor={"blue.700"}
               borderRadius={"full"}
-              children={<BiSearchAlt color="white" />}
-            ></InputRightAddon>
+            >
+              <BiSearchAlt color="white" />
+            </InputRightAddon>
           </InputGroup>
         </form>
         <br></br>
+
         <Text fontFamily={"Inter"} fontWeight={"bold"}>
           Current Weather of {data?.location?.name}, {data?.location?.country}
         </Text>
@@ -101,8 +104,9 @@ const SearchResult = () => {
               humidity={data.current.humidity}
             />
 
-            <TodayForcast data={data ? data : ""} />
-            <TomorrowForcast data={data ? data : ""} />
+            <TodayForcast data={data} />
+
+            <TomorrowForcast data={data} />
           </>
         ) : (
           ""
@@ -121,7 +125,17 @@ export default SearchResult;
 // }
 
 export async function getServerSideProps(context) {
+  console.log(" context is ", context.query.searchresult);
+  let data = {};
+  try {
+    let result = await axios.get(
+      `${urls.base_url}/${urls.forecast}?key=${urls.key}&q=${context.query.searchresult}&days=2&aqi=yes&alerts=yes`
+    );
+    data = JSON.parse(JSON.stringify(result.data));
+  } catch (err) {
+    console.log(err);
+  }
   return {
-    props: {},
+    props: { data },
   };
 }

@@ -22,7 +22,7 @@ const TodayForcast = (data) => {
         fontFamily={"Inter"}
       >
         <Text textAlign={"center"} fontFamily={"Inter"} fontWeight={"bold"}>
-          Today's forcast
+          Today&apos;s forcast
         </Text>
         <br></br>
         <Box
@@ -33,12 +33,13 @@ const TodayForcast = (data) => {
           {datas?.forecast.forecastday[0].hour.map((item, index) => {
             if (index % 3 == 0) {
               return (
-                <Box fontWeight={"medium"}>
+                <Box key={index} fontWeight={"medium"}>
                   <Text textAlign={"center"}>{item.time.substring(11)}</Text>
                   <Image
                     src={`http:${item.condition.icon}`}
                     width={"40"}
                     height={"40"}
+                    alt="condition"
                   ></Image>
                   <Text textAlign={"center"}>
                     {item.temp_c}

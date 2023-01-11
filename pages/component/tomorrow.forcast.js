@@ -1,5 +1,4 @@
 import { Box, Text } from "@chakra-ui/react";
-import Image from "next/image";
 import React from "react";
 import {
   BsCloudRain,
@@ -32,7 +31,7 @@ const TomorrowForcast = (data) => {
         fontFamily={"Inter"}
       >
         <Text textAlign={"center"} fontFamily={"Inter"} fontWeight={"bold"}>
-          Tomorrow's forcast: {datas.day.condition.text}
+          Tomorrow&apos;s forcast: {datas.day.condition.text}
         </Text>
         <br></br>
         <Box
