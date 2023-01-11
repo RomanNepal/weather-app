@@ -74,8 +74,9 @@ export default function Home(data) {
                 onClick={handleSubmit}
                 bgColor={"blue.700"}
                 borderRadius={"full"}
-                children={<BiSearchAlt color="white" />}
-              ></InputRightAddon>
+              >
+                <BiSearchAlt color="white" />
+              </InputRightAddon>
             </InputGroup>
           </form>
 
